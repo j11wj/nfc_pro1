@@ -5,27 +5,62 @@ class PlaceRepository {
     // الموقع الأصلي (للحفاظ على البنية)
     HistoricalPlace(
       id: '1',
-      imagePaths: ['h1.jpg', 'pyramids_2.jpg'],
+      imagePaths: ['h1.jpg', 'hammurabi2.jpg'],
       title: {
-        'ar': 'أهرامات الجيزة',
-        'en': 'The Pyramids of Giza',
-        'fr': 'Les Pyramides de Gizeh',
-        'es': 'Las Pirámides de Guiza',
-        'zh': '吉萨金字塔',
+        'ar': 'شريعة حمورابي',
+        'en': 'Code of Hammurabi',
+        'fr': 'Code d\'Hammurabi',
+        'es': 'Código de Hammurabi',
+        'zh': '汉谟拉比法典',
       },
       description: {
-        'ar': 'أحد عجائب الدنيا السبع القديمة',
-        'en': 'One of the Seven Ancient Wonders',
-        'fr': 'Une des sept merveilles du monde antique',
-        'es': 'Una de las siete maravillas del mundo antiguo',
-        'zh': '古代世界七大奇迹之一',
+        'ar': 'أقدم نظام قانوني مكتوب في التاريخ',
+        'en': 'The oldest written legal system in history',
+        'fr': 'Le plus ancien système juridique écrit de l\'histoire',
+        'es': 'El sistema legal escrito más antiguo de la historia',
+        'zh': '历史上最早的成文法律体系',
       },
       history: {
-        'ar': 'بُنيت قبل حوالي 4500 سنة كمقابر للفراعنة',
-        'en': 'Built about 4500 years ago as pharaoh tombs',
-        'fr': 'Construites il y a environ 4500 ans comme tombes',
-        'es': 'Construidas hace 4500 años como tumbas',
-        'zh': '建于大约4500年前作为法老陵墓',
+        'ar': '''
+• سادس ملوك السلالة البابلية الأولى (حكم 1792-1750 ق.م)
+• أشهر أعماله مسلّة القوانين المنقوشة بالخط المسماري
+• تضمنت 282 مادة قانونية تغطي مختلف جوانب الحياة
+• مبدأ "العين بالعين والسن بالسن" الشهير
+• وحد بلاد الرافدين تحت حكم مركزي
+• ازدهار اقتصادي وثقافي في عهده
+''',
+        'en': '''
+• 6th king of the First Babylonian Dynasty (1792–1750 BCE)
+• Famous for the cuneiform-law stele
+• 282 legal articles covering various life aspects
+• "An eye for an eye" principle
+• Unified Mesopotamia under central rule
+• Economic & cultural prosperity during his reign
+''',
+        'fr': '''
+• 6ème roi de la première dynastie babylonienne (1792-1750 av. J.-C.)
+• Célèbre pour sa stèle de lois en écriture cunéiforme
+• 282 articles juridiques couvrant divers aspects de la vie
+• Principe "œil pour œil"
+• Unification de la Mésopotamie sous un pouvoir central
+• Prospérité économique et culturelle sous son règne
+''',
+        'es': '''
+• 6º rey de la Primera Dinastía de Babilonia (1792-1750 a. C.)
+• Famoso por la estela de leyes en escritura cuneiforme
+• 282 artículos legales cubriendo varios aspectos de la vida
+• Principio de "ojo por ojo"
+• Unificó Mesopotamia bajo un gobierno central
+• Prosperidad económica y cultural durante su reinado
+''',
+        'zh': '''
+• 巴比伦第一王朝第六位国王（公元前1792–1750年）
+• 以楔形文字法律石碑闻名
+• 包含282条涵盖生活各方面的法律条款
+• “以眼还眼”原则
+• 在中央统治下统一美索不达米亚
+• 统治期间经济文化繁荣
+''',
       },
     ),
 

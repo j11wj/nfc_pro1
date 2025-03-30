@@ -15,49 +15,91 @@ class NfcHandler extends StatefulWidget {
 }
 
 class _NfcHandlerState extends State<NfcHandler> {
-  String _message = AppConstants.nfcInitialMessage;
   bool _isProcessing = false;
   static final Uint8List _uriType = Uint8List.fromList('U'.codeUnits);
+  bool _isReading = false;
+  String _message = 'جاري الانتظار...';
+  @override
+  void initState() {
+    super.initState();
+    _startNfcReading();
+  }
+
+  Future<void> _startNfcReading() async {
+    setState(() => _isReading = true);
+    try {
+      await NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
+        final ndef = Ndef.from(tag);
+        if (ndef == null) {
+          setState(() => _message = AppConstants.nfcReadError);
+          return;
+        }
+
+        final message = await ndef.read();
+        for (final record in message.records) {
+          if (_isUriRecord(record)) {
+            String payload = String.fromCharCodes(record.payload)
+                .trim()
+                .replaceAll(RegExp(r'\s+'), '')
+                .replaceAll(RegExp(r'[^\x20-\x7E]'), '');
+
+            if (!payload.startsWith('myapp://')) {
+              payload = 'myapp://${payload.replaceFirst('pages/', 'places/')}';
+            }
+
+            try {
+              final uri = Uri.parse(payload);
+              if (uri.host == 'places' && uri.pathSegments.isNotEmpty) {
+                final placeId = uri.pathSegments[0];
+                if (mounted) context.go('/place/$placeId');
+              }
+            } on FormatException {
+              setState(() => _message = AppConstants.nfcReadError);
+            }
+          }
+        }
+        await NfcManager.instance.stopSession();
+      });
+    } catch (e) {
+      setState(() => _message = '⚠️ خطأ: ${e.toString()}');
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildActionButton(
-          '📝 كتابة على البطاقة',
-          _isProcessing ? null : _writeTag,
-          AppColors.primaryColor,
-        ),
+        if (_isReading)
+          const CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 3,
+          ),
         const SizedBox(height: 20),
-        _buildActionButton(
-          '📖 قراءة البطاقة',
-          _isProcessing ? null : _readTag,
-          AppColors.secondaryColor,
-        ),
-        const SizedBox(height: 30),
-        AnimatedSwitcher(
+        AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
+          opacity: _isReading ? 0.8 : 1.0,
           child: Text(
             _message,
-            key: ValueKey<String>(_message),
-            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               color: _getMessageColor(),
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        if (_isProcessing)
-          const Padding(
-            padding: EdgeInsets.only(top: 20),
-            child: CircularProgressIndicator(
-              color: AppColors.primaryColor,
-            ),
-          ),
       ],
     );
   }
+
+  // Color _getMessageColor() {
+  //   return _message.contains('✔️')
+  //       ? Colors.green.shade200
+  //       : _message.contains('❌')
+  //           ? Colors.red.shade200
+  //           : Colors.white;
+  // }
 
   Color _getMessageColor() {
     if (_message.contains('✔️')) return Colors.green.shade800;
@@ -70,7 +112,7 @@ class _NfcHandlerState extends State<NfcHandler> {
     return SizedBox(
       width: 240,
       child: ElevatedButton.icon(
-        icon: Icon(_getButtonIcon(text)), 
+        icon: Icon(_getButtonIcon(text)),
         label: Text(text),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
@@ -102,7 +144,8 @@ class _NfcHandlerState extends State<NfcHandler> {
     });
 
     try {
-      final uriString = 'myapp://places/${Uri.encodeComponent(widget.placeIdToWrite!)}';
+      final uriString =
+          'myapp://places/${Uri.encodeComponent(widget.placeIdToWrite!)}';
 
       await NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
         final ndef = Ndef.from(tag);

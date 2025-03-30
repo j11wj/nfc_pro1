@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
+import 'package:flutter_tts/flutter_tts.dart';
 import '../../../../core/constants.dart';
 import '../../data/repositories/place_repository.dart';
 import '../../domain/models/place_model.dart';
 
 class HistoricalPlaceScreen extends StatefulWidget {
   final String placeId;
-
   const HistoricalPlaceScreen({super.key, required this.placeId});
 
   @override
@@ -18,11 +16,73 @@ class _HistoricalPlaceScreenState extends State<HistoricalPlaceScreen> {
   late HistoricalPlace _place;
   int _currentImageIndex = 0;
   String _currentLanguage = 'ar';
+  late FlutterTts _tts;
+  bool _isSpeaking = false;
+
+  final Map<String, String> _languageCodes = {
+    'ar': 'ar',
+    'en': 'en-US',
+    'fr': 'fr-FR',
+    'es': 'es-ES',
+    'zh': 'zh-CN',
+  };
 
   @override
   void initState() {
     super.initState();
     _place = PlaceRepository.getPlaceById(widget.placeId)!;
+    _initTts();
+  }
+
+  void _initTts() async {
+    _tts = FlutterTts();
+    await _tts.setLanguage(_languageCodes[_currentLanguage]!);
+
+    _tts.setStartHandler(() => setState(() => _isSpeaking = true));
+    _tts.setCompletionHandler(() => setState(() => _isSpeaking = false));
+    _tts.setErrorHandler((msg) {
+      setState(() => _isSpeaking = false);
+      print("TTS Error: $msg");
+    });
+  }
+
+  Future<void> _updateLanguage(String lang) async {
+    try {
+      setState(() => _currentLanguage = lang);
+      await _tts.stop();
+      if (await _tts.isLanguageAvailable(_languageCodes[lang]!)) {
+        await _tts.setLanguage(_languageCodes[lang]!);
+      } else {
+        print("اللغة غير مدعومة: ${_languageCodes[lang]}");
+      }
+    } catch (e) {
+      print("خطأ في تغيير اللغة: $e");
+    }
+  }
+
+  Future<void> _toggleSpeech() async {
+    try {
+      final text = '''
+      ${_place.title[_currentLanguage]}
+      ${_place.description[_currentLanguage]}
+      ${_place.history[_currentLanguage]}
+      ''';
+
+      if (_isSpeaking) {
+        await _tts.stop();
+      } else {
+        await _tts.speak(text);
+      }
+    } catch (e) {
+      print("خطأ في التشغيل الصوتي: $e");
+      setState(() => _isSpeaking = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _tts.stop();
+    super.dispose();
   }
 
   @override
@@ -32,9 +92,11 @@ class _HistoricalPlaceScreenState extends State<HistoricalPlaceScreen> {
         title: Text(_place.title[_currentLanguage]!),
         actions: [
           IconButton(
-            icon: const Icon(Icons.home),
-            onPressed: () =>
-                Navigator.popUntil(context, (route) => route.isFirst),
+            icon: Icon(
+              _isSpeaking ? Icons.volume_off : Icons.volume_up,
+              color: Colors.white,
+            ),
+            onPressed: _toggleSpeech,
           ),
         ],
       ),
@@ -79,8 +141,7 @@ class _HistoricalPlaceScreenState extends State<HistoricalPlaceScreen> {
               label: Text(lang.value),
               selected: _currentLanguage == lang.key,
               selectedColor: AppColors.accentColor,
-              onSelected: (selected) =>
-                  setState(() => _currentLanguage = lang.key),
+              onSelected: (selected) => _updateLanguage(lang.key),
             );
           }).toList(),
         ),

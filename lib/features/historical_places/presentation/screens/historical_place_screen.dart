@@ -102,7 +102,7 @@ class _HistoricalPlaceScreenState extends State<HistoricalPlaceScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          _buildImageSlider(),
+          // _buildImageSlider(),
           _buildLanguageSelector(),
           _buildContentSection(),
         ],

@@ -15,7 +15,7 @@ class NotFoundScreen extends StatelessWidget {
             const Icon(Icons.error_outline, size: 80, color: Colors.red),
             const SizedBox(height: 20),
             Text(
-              AppConstants.pageNotFoundMessage,
+              'هذه الصفحة غير موجودة',
               style: const TextStyle(fontSize: 24),
             ),
           ],

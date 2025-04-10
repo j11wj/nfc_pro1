@@ -1,10 +1,14 @@
 import 'dart:typed_data';
+import 'package:flutter/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import '../../../../core/constants.dart';
+import '../../../../core/route_observer.dart';
 
+// final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
 class NfcHandler extends StatefulWidget {
   final String? placeIdToWrite;
 
@@ -14,15 +18,33 @@ class NfcHandler extends StatefulWidget {
   State<NfcHandler> createState() => _NfcHandlerState();
 }
 
-class _NfcHandlerState extends State<NfcHandler> {
+class _NfcHandlerState extends State<NfcHandler> with WidgetsBindingObserver{
   bool _isProcessing = false;
   static final Uint8List _uriType = Uint8List.fromList('U'.codeUnits);
   bool _isReading = false;
   String _message = 'جاري الانتظار...';
+  
+  ////////
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _startNfcReading();
+  }
+
+  @override
+  void dispose() {
+    NfcManager.instance.stopSession();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // المستخدم رجع للتطبيق (مثلاً بعد التنقل بين الصفحات)
+      _startNfcReading();
+    }
   }
 
   Future<void> _startNfcReading() async {

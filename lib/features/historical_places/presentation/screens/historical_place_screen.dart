@@ -85,20 +85,68 @@ class _HistoricalPlaceScreenState extends State<HistoricalPlaceScreen> {
     super.dispose();
   }
 
+  void showLanguageNotSupportedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: Colors.white,
+          title: Row(
+            children: const [
+              Icon(Icons.language, color: Colors.deepPurple),
+              SizedBox(width: 8),
+              Text(
+                'اللغة غير مدعومة',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            'جهازك لا يدعم اللغة العربية حالياً. يرجى تغيير إعدادات اللغة أو استخدام لغة مدعومة.',
+            textAlign: TextAlign.right,
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'حسناً',
+                style: TextStyle(color: Colors.deepPurple),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_place.title[_currentLanguage]!),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(
-        //       _isSpeaking ? Icons.volume_off : Icons.volume_up,
-        //       color: Colors.white,
-        //     ),
-        //     onPressed: _toggleSpeech,
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSpeaking ? Icons.volume_off : Icons.volume_up,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              if (_currentLanguage == 'ar') {
+                showLanguageNotSupportedDialog(context);
+                return;
+              } else {
+                _toggleSpeech();
+                setState(() {
+                  _isSpeaking = !_isSpeaking;
+                });
+              }
+            },
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [

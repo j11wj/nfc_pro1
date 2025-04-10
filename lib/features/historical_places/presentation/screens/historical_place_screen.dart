@@ -90,15 +90,15 @@ class _HistoricalPlaceScreenState extends State<HistoricalPlaceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_place.title[_currentLanguage]!),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSpeaking ? Icons.volume_off : Icons.volume_up,
-              color: Colors.white,
-            ),
-            onPressed: _toggleSpeech,
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(
+        //       _isSpeaking ? Icons.volume_off : Icons.volume_up,
+        //       color: Colors.white,
+        //     ),
+        //     onPressed: _toggleSpeech,
+        //   ),
+        // ],
       ),
       body: CustomScrollView(
         slivers: [

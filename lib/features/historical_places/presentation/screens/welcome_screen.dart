@@ -22,7 +22,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
 
     _scaleAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(

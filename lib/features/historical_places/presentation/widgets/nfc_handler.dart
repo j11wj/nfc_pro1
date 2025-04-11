@@ -18,12 +18,12 @@ class NfcHandler extends StatefulWidget {
   State<NfcHandler> createState() => _NfcHandlerState();
 }
 
-class _NfcHandlerState extends State<NfcHandler> with WidgetsBindingObserver{
+class _NfcHandlerState extends State<NfcHandler> with WidgetsBindingObserver {
   bool _isProcessing = false;
   static final Uint8List _uriType = Uint8List.fromList('U'.codeUnits);
   bool _isReading = false;
   String _message = 'جاري الانتظار...';
-  
+
   ////////
   @override
   void initState() {
@@ -93,11 +93,11 @@ class _NfcHandlerState extends State<NfcHandler> with WidgetsBindingObserver{
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (_isReading)
-          const CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 3,
-          ),
+        // if (_isReading)
+        //   const CircularProgressIndicator(
+        //     color: Colors.white,
+        //     strokeWidth: 3,
+        //   ),
         const SizedBox(height: 20),
         AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
@@ -110,6 +110,12 @@ class _NfcHandlerState extends State<NfcHandler> with WidgetsBindingObserver{
               fontWeight: FontWeight.w500,
             ),
           ),
+        ),
+        const SizedBox(height: 10),
+        _buildActionButton(
+          'القراءة على البطاقة',
+          _isProcessing ? null : _readTag,
+          Colors.blue.shade800,
         ),
       ],
     );
